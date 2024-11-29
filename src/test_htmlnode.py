@@ -19,9 +19,15 @@ class TestHTMLNode(unittest.TestCase):
     def test_props_to_html(self):
         node = HTMLNode("h1", "Hello", [], {"class": "test", "id": "testid"})
         self.assertEqual(node.props_to_html(), ' class="test" id="testid"')
+    
+    def test_empty_props_to_html(self):
+        node = HTMLNode("h1", "Hello", [], {})
+        self.assertEqual(node.props_to_html(), '')
+
+    def test_empty_repr(self):
+        node = HTMLNode()
+        self.assertEqual(repr(node), 'HTMLNode(None, None, children=None, {})')
 
     def test_repr(self):
         node = HTMLNode("h1", "Hello", [], {"class": "test", "id": "testid"})
-        self.assertEqual(repr(node), '<h1 class="test" id="testid">Hello</h1>')
-
-    
+        self.assertEqual(repr(node), "HTMLNode(h1, Hello, children=[], {'class': 'test', 'id': 'testid'})")
