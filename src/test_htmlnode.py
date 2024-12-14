@@ -52,3 +52,41 @@ class TestParentNode(unittest.TestCase):
         self.assertEqual(node.tag, "h1")
         self.assertEqual(node.children, children)
         self.assertEqual(node.props, {})
+
+    def test_to_html(self):
+        node = ParentNode(
+            "p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode(None, "Normal text"),
+                LeafNode("i", "italic text"),
+                LeafNode(None, "Normal text"),
+            ],
+        )   
+        expected = '<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>'
+        self.assertEqual(node.to_html(), expected)
+    
+    def test_to_html_with_parent_node(self):
+        node = ParentNode('p', [ParentNode('p', [LeafNode('b', 'Bold text')])])
+        expected = '<p><p><b>Bold text</b></p></p>'
+        self.assertEqual(node.to_html(), expected)
+    
+    def test_multiple_more_children(self):
+        node = ParentNode(
+            'p',
+            [
+                LeafNode(None, 'BOSH', {'href': 'https://google.com'}),
+                ParentNode('h1', [ParentNode('b', [LeafNode('b', 'bolded')])]),
+                LeafNode(None, 'BOSH')
+            ]
+                )
+        expected = '<p>BOSH<h1><b><b>bolded</b></b></h1>BOSH</p>'
+        self.assertEqual(node.to_html(), expected)
+    
+    def test_to_html_no_children(self):
+        node = ParentNode('p', [])
+        self.assertRaises(ValueError, node.to_html)
+
+    def test_to_html_no_tag(self):
+        node = ParentNode(None, [LeafNode('b', 'Bold text')])
+        self.assertRaises(ValueError, node.to_html)
