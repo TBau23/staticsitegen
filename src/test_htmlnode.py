@@ -76,11 +76,11 @@ class TestParentNode(unittest.TestCase):
             'p',
             [
                 LeafNode(None, 'BOSH', {'href': 'https://google.com'}),
-                ParentNode('h1', [ParentNode('b', [LeafNode('b', 'bolded')])]),
+                ParentNode('h1', [ParentNode('b', [LeafNode('b', 'Innit')])]),
                 LeafNode(None, 'BOSH')
             ]
                 )
-        expected = '<p>BOSH<h1><b><b>bolded</b></b></h1>BOSH</p>'
+        expected = '<p>BOSH<h1><b><b>Innit</b></b></h1>BOSH</p>'
         self.assertEqual(node.to_html(), expected)
     
     def test_to_html_no_children(self):

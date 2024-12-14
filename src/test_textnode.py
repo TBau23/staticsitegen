@@ -1,6 +1,6 @@
 import unittest
-
-from textnode import TextNode, TextType
+from htmlnode import LeafNode
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 class TestTextNode(unittest.TestCase):
@@ -34,6 +34,24 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(node.text, 'test node')
         self.assertEqual(node.text_type, TextType.ITALIC)
         self.assertEqual(node.url, "https://www.google.com")
+
+
+class TestTextNodeToHtmlNode(unittest.TestCase):
+
+    def test_to_html_node_italic(self):
+        node = TextNode("test node", TextType.ITALIC)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node, LeafNode('i', 'test node'))
+
+    def test_to_html_node_code(self):
+        node = TextNode('wawacode', TextType.CODE)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node, LeafNode('code', 'wawacode'))
+    
+    def test_to_html_node_link(self):
+        node = TextNode('wawacode', TextType.LINK, 'https://www.google.com')
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node, LeafNode('a', 'wawacode', {'href': 'https://www.google.com'}))
 
 
 if __name__ == "__main__":
