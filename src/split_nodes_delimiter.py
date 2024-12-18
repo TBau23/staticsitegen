@@ -17,7 +17,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     
 def create_delimited_segments(text, delimiter):
     escaped_delimiter = re.escape(delimiter) #escape the delimiter so we can use it in regex safely
-    pattern = rf'({escaped_delimiter}.*?{escaped_delimiter})'
+    pattern = rf'({escaped_delimiter}.+?{escaped_delimiter})'
     segments = re.split(pattern, text)
     print(segments, 'SEGMENTS')
     result = [
@@ -31,6 +31,9 @@ def create_delimited_segments(text, delimiter):
 
                 
 
-n1 = TextNode('yo *yo* yo',TextType.ITALIC)
+input_nodes = [
+    TextNode("Yo this is actually *italic* and also *again*", TextType.NORMAL)
+    ]
 
-print(split_nodes_delimiter([TextNode("This is text with a `code block` word", TextType.NORMAL)], '`', TextType.CODE))
+
+print(split_nodes_delimiter(input_nodes, '*', TextType.ITALIC))
