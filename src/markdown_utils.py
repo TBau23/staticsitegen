@@ -28,11 +28,10 @@ def create_delimited_segments(text, delimiter):
     ]
     return result
 
-                
 
-# input_nodes = [
-#     TextNode("Yo this is actually *italic* and also *again*", TextType.NORMAL)
-#     ]
+def extract_markdown_images(text):
+    pattern = r'!\[(.*?)\]\((.*?)\)'
+    matches = re.findall(pattern, text)
+    return matches
 
-
-# print(split_nodes_delimiter(input_nodes, '*', TextType.ITALIC))
+extract_markdown_images("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)")
