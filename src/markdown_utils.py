@@ -28,10 +28,48 @@ def create_delimited_segments(text, delimiter):
     ]
     return result
 
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.NORMAL:
+            new_nodes.append(node)
+        else:
+            images = extract_markdown_images(node.text)
+            segments = re.split(r'!\[(.*?)\]\((.*?)\)', node.text)
+            img_idx = 0
+            for s in segments:
+                if s in images[img_idx]:
+                    new_nodes.append(TextNode(s, TextType.IMAGE, images[img_idx][1]))
+                    img_idx += 1
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.NORMAL:
+            new_nodes.append(node)
+        else:
+            links = extract_markdown_links(node.text)
+            segments = re.split(r'\[(.*?)\]\((.*?)\)', node.text)
+            link_idx = 0
+            for s in segments:
+                if s in links[link_idx]:
+                    new_nodes.append(TextNode(s, TextType.LINK, links[link_idx][1]))
+                    link_idx += 1
+    return new_nodes
+
+def extract_markdown_links(text):
+    pattern = r'\[(.*?)\]\((.*?)\)'
+    matches = re.findall(pattern, text)
+    return matches
 
 def extract_markdown_images(text):
     pattern = r'!\[(.*?)\]\((.*?)\)'
     matches = re.findall(pattern, text)
     return matches
 
-extract_markdown_images("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)")
+
+node = TextNode("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.NORMAL)
+split_nodes_image([node])
+
+# extract_markdown_images("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)")
