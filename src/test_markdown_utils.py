@@ -56,15 +56,38 @@ class TextSplitNodesLink(unittest.TestCase):
             TextType.NORMAL,
         )
         new_nodes = split_nodes_link([node])
-        print('NEW_NODES!!',new_nodes)
         expected_result = [
             TextNode("This is text with a link ", TextType.NORMAL, None),
             TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
             TextNode(" and ", TextType.NORMAL, None),
             TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
         ]
-        print('EXPECTED_RESULT!!', expected_result)
+        self.assertEqual(new_nodes, expected_result)
+
+    def test_multiple_nodes(self):
+        input_nodes = [
+            TextNode("This is [wack](fakeLink.com)", TextType.NORMAL),
+            TextNode("This is [wack](fakeLink.com)", TextType.BOLD),
+            TextNode("This is [wack](fakeLink.com)", TextType.NORMAL),
+        ]
+        new_nodes = split_nodes_link(input_nodes)
+        expected_result = [
+            TextNode("This is ", TextType.NORMAL, None),
+            TextNode("wack", TextType.LINK, "fakeLink.com"),
+            TextNode("This is [wack](fakeLink.com)", TextType.BOLD),
+            TextNode("This is ", TextType.NORMAL, None),
+            TextNode("wack", TextType.LINK, "fakeLink.com"),
+        ]
         self.assertEqual(new_nodes, expected_result)
 
 class TextSplitNodesImage(unittest.TestCase):
-    pass
+    def test_simple_image(self):
+        node = TextNode("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", TextType.NORMAL)
+        new_nodes = split_nodes_image([node])
+        expected_result = [
+            TextNode("This is text with a ", TextType.NORMAL, None),
+            TextNode("rick roll", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"),
+            TextNode(" and ", TextType.NORMAL, None),
+            TextNode("obi wan", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+        ]
+        self.assertEqual(new_nodes, expected_result)
