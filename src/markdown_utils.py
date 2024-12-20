@@ -38,9 +38,15 @@ def split_nodes_image(old_nodes):
             segments = re.split(r'!\[(.*?)\]\((.*?)\)', node.text)
             img_idx = 0
             for s in segments:
-                if s in images[img_idx]:
+                if s == "":
+                    continue
+                elif img_idx < len(images) and s in images[img_idx]:
                     new_nodes.append(TextNode(s, TextType.IMAGE, images[img_idx][1]))
                     img_idx += 1
+                elif len(new_nodes) and new_nodes[-1].url == s:
+                    continue
+                else:
+                    new_nodes.append(TextNode(s, TextType.NORMAL))
     return new_nodes
 
 def split_nodes_link(old_nodes):
@@ -52,10 +58,16 @@ def split_nodes_link(old_nodes):
             links = extract_markdown_links(node.text)
             segments = re.split(r'\[(.*?)\]\((.*?)\)', node.text)
             link_idx = 0
-            for s in segments:
-                if s in links[link_idx]:
-                    new_nodes.append(TextNode(s, TextType.LINK, links[link_idx][1]))
+            for i in range(len(segments)):
+                if segments[i] == "":
+                    continue
+                if link_idx < len(links) and segments[i] in links[link_idx]:
+                    new_nodes.append(TextNode(segments[i], TextType.LINK, links[link_idx][1]))
                     link_idx += 1
+                elif len(new_nodes) and new_nodes[-1].url == segments[i]:
+                    continue
+                else:
+                    new_nodes.append(TextNode(segments[i], TextType.NORMAL))
     return new_nodes
 
 def extract_markdown_links(text):
@@ -73,3 +85,9 @@ node = TextNode("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gi
 split_nodes_image([node])
 
 # extract_markdown_images("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)")
+
+node2 = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.NORMAL,
+         )
+split_nodes_link([node2])

@@ -48,3 +48,23 @@ class TestExtractMarkdownImages(unittest.TestCase):
         result = extract_markdown_images(input_text)
         expected_result = []
         self.assertEqual(result, expected_result)
+
+class TextSplitNodesLink(unittest.TestCase):
+    def test_simple_link(self):
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.NORMAL,
+        )
+        new_nodes = split_nodes_link([node])
+        print('NEW_NODES!!',new_nodes)
+        expected_result = [
+            TextNode("This is text with a link ", TextType.NORMAL, None),
+            TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+            TextNode(" and ", TextType.NORMAL, None),
+            TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
+        ]
+        print('EXPECTED_RESULT!!', expected_result)
+        self.assertEqual(new_nodes, expected_result)
+
+class TextSplitNodesImage(unittest.TestCase):
+    pass
